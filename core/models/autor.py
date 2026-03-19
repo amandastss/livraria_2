@@ -1,0 +1,13 @@
+from django.db import models
+
+
+class Autor(models.Model):
+    descricao = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100, null=True, blank=True)  # noqa: F811
+
+    def __str__(self):
+        return self.descricao
+
+    class Meta:
+        verbose_name = 'Autor'
+        verbose_name_plural = 'Autores'

@@ -1,19 +1,32 @@
-
-from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField
+from rest_framework.serializers import (
+    CharField,
+    DecimalField,
+    ModelSerializer,
+    SerializerMethodField,
+)
 
 from core.models import Compra, ItensCompra
 
 
 class ItensCompraSerializer(ModelSerializer):
+    titulo = CharField(source='livro.titulo', read_only=True)
+    editora = CharField(source='livro.editora.nome', read_only=True)
+    preco = DecimalField(
+        source='livro.preco',
+        max_digits=7,
+        decimal_places=2,
+        read_only=True,
+    )
+    capa = CharField(source='livro.capa.url', read_only=True)
+
     total = SerializerMethodField()
 
-    def get_total(self, instance):
-        return instance.livro.preco * instance.quantidade
+    def get_total(self, item):
+        return item.livro.preco * item.quantidade
 
     class Meta:
         model = ItensCompra
-        fields = ('livro', 'quantidade', 'total')
-        depth = 1
+        fields = ('id', 'titulo', 'editora', 'quantidade', 'preco', 'total', 'capa')
 
 
 class CompraSerializer(ModelSerializer):
@@ -23,4 +36,4 @@ class CompraSerializer(ModelSerializer):
 
     class Meta:
         model = Compra
-        fields = '__all__'
+        fields = ('id', 'usuario', 'status', 'total', 'itens')
